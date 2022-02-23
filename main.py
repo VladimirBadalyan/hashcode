@@ -1,3 +1,7 @@
+import os
+
+
+
 def read_input_file(file_name):
     res = []
     with open(file=file_name) as f:
@@ -18,6 +22,7 @@ def write_output_file(ingrideints, file_name):
     for ingrideint in ingrideints:
         line += ingrideint + ' '
 
+    os.makedirs('outputs', exist_ok=True)
     with open(file=file_name, mode='w') as f:
         f.write(line)
 
