@@ -38,7 +38,7 @@ def find_valid_client_indexes(client_infos, ingridentes):
     valid_client_indexes = []
     for i in range(len(client_infos)):
         likes, dislikes = client_infos[i]
-        check = all(item in ingridentes for item in likes) and not any(item in ingridentes for item in dislikes)
+        check = not any(item in ingridentes for item in dislikes) and all(item in ingridentes for item in likes)
         if check:
             valid_client_indexes.append(i)
     return valid_client_indexes
