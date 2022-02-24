@@ -23,10 +23,10 @@ def read_input_file(file_name):
 
         def parse_project():
             project_info = f.readline().split(' ')
-            skills = []
+            skills = dict()
             for i in range(int(project_info[-1])):
                 skill = f.readline().split(' ')
-                skills.append((skill[0], int(skill[1])))
+                skills[skill[0]] = int(skill[1])
             return project_info[0], int(project_info[1]), int(project_info[2]), int(project_info[3]), skills
 
 
@@ -48,8 +48,8 @@ def write_output_file(projects_info, file_name):
         f.write(line)
 
 
-def most_relevant_developrs(project, developers):
-    return developers
+def most_relevant_developers(project, developers):
+    return assign_developers(project, developers)
 
 def most_relevent_projects(day, projects):
     return projects
@@ -69,9 +69,11 @@ data_file_names = [
 ]
 
 
+from Assignments import assign_developers
+
 def process(data_file_name):
     contributors, projects = read_input_file(data_file_name)
-
+    most_relevant_developers(projects[0], contributors)
     result = []
     # write_output_file(ingredients, 'outputs/' + data_file_name.split('/')[1].split("_")[0] + '_out.txt')
 
