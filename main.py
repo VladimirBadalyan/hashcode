@@ -47,21 +47,32 @@ def write_output_file(projects_info, file_name):
     with open(file=file_name, mode='w') as f:
         f.write(line)
 
+
+def most_relevant_developrs(project, developers):
+    return developers
+
+def most_relevent_projects(day, projects):
+    return projects
+
+def solve(contributers, projects):
+    contributers
+
+    # for i in range(100):
+
 data_file_names = [
-    'inputs/a_an_example.in.txt',
-    # 'inputs/b_better_start_small.in.txt',
+    # 'inputs/a_an_example.in.txt',
+    'inputs/b_better_start_small.in.txt',
     # 'inputs/c_collaboration.in.txt',
     # 'inputs/d_dense_schedule.in.txt',
     # 'inputs/e_exceptional_skills.in.txt',
     # 'f_find_great_mentors.in.txt'
 ]
-# data_file_names = ['./a_an_example.in.txt']
 
 
 def process(data_file_name):
-    client_infos = read_input_file(data_file_name)
-    # ingredients = find_ingridents(client_infos)
-    # print(data_file_name, len(find_valid_client_indexes(client_infos, ingredients)))
+    contributors, projects = read_input_file(data_file_name)
+
+    result = []
     # write_output_file(ingredients, 'outputs/' + data_file_name.split('/')[1].split("_")[0] + '_out.txt')
 
 for data_file_name in data_file_names:
