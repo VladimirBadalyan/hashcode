@@ -23,11 +23,11 @@ def read_input_file(file_name):
 
         def parse_project():
             project_info = f.readline().split(' ')
-            skills = []
+            skills = dict()
             for i in range(int(project_info[-1])):
                 skill = f.readline().split(' ')
-                skills.append((skill[0], int(skill[1])))
-            return project_info[0], int(project_info[1]), int(project_info[2]), int(project_info[3]), skills, []
+                skills[skill[0]] = int(skill[1])
+            return [project_info[0], int(project_info[1]), int(project_info[2]), int(project_info[3]), skills, []]
 
 
         for i in range(projects_number):
@@ -36,9 +36,9 @@ def read_input_file(file_name):
     return contributors, projects
 
 
-def write_output_file(projects_info, file_name):
-    line = str(len(projects_info)) + '\n'
-    for project_name, contributers in projects_info:
+def write_output_file(projects, file_name):
+    line = str(len(projects)) + '\n'
+    for project_name, _, _, _, _, contributers in projects:
         line += project_name + '\n'
         for contributer in contributers:
             line += contributer + ' '
@@ -49,21 +49,33 @@ def write_output_file(projects_info, file_name):
 
 
 def most_relevant_developrs(project, developers):
-    return developers
+
+    return False
 
 
 def most_relevent_projects_0(day, projects):
     projects_cpy = projects.copy()
-    projects_cpy.sort(key=lambda p: p[2] / p[1]).reverse()
+    projects_cpy.sort(key=lambda p: p[2] / p[1])
 
     return projects_cpy
 
 
-def solve(contributors, projects):
+data_file_names = [
+    # 'inputs/a_an_example.in.txt',
+    'inputs/b_better_start_small.in.txt',
+    # 'inputs/c_collaboration.in.txt',
+    # 'inputs/d_dense_schedule.in.txt',
+    # 'inputs/e_exceptional_skills.in.txt',
+    # 'f_find_great_mentors.in.txt'
+]
+
+
+def process(data_file_name):
+    contributors, projects = read_input_file(data_file_name)
     finished_projects = []
     ongoing_projects = []
     for i in range(100):
-        for project in most_relevent_projects(i, projects):
+        for project in most_relevent_projects_0(i, projects):
             if most_relevant_developrs(project, contributors):
                 project.append(i)
                 ongoing_projects.append(project)
@@ -76,21 +88,8 @@ def solve(contributors, projects):
                 finished_projects.append(ongoing_project)
                 ongoing_projects.remove(ongoing_project)
 
-data_file_names = [
-    'inputs/a_an_example.in.txt',
-    'inputs/b_better_start_small.in.txt',
-    'inputs/c_collaboration.in.txt',
-    'inputs/d_dense_schedule.in.txt',
-    'inputs/e_exceptional_skills.in.txt',
-    'f_find_great_mentors.in.txt'
-]
-
-
-def process(data_file_name):
-    contributors, projects = read_input_file(data_file_name)
-
-    result = []
-    # write_output_file(ingredients, 'outputs/' + data_file_name.split('/')[1].split("_")[0] + '_out.txt')
+        if i % 10 == 0:
+            write_output_file(projects, 'outputs/' + data_file_name.split('/')[1].split("_")[0] + '_out.txt')
 
 for data_file_name in data_file_names:
     process(data_file_name)
