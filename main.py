@@ -51,12 +51,28 @@ def write_output_file(projects_info, file_name):
 def most_relevant_developrs(project, developers):
     return developers
 
+# RELEVANT PROJECTS ------------------------------------------
+
 
 def most_relevent_projects_0(day, projects):
     projects_cpy = projects.copy()
-    projects_cpy.sort(key=lambda p: p[2] / p[1]).reverse()
-
+    projects_cpy.sort(key=lambda p: p[2] / p[1], reverse=True)
     return projects_cpy
+
+
+def most_relevent_projects_1(day, projects):
+    projects_cpy = projects.copy()
+    projects_cpy.sort(key=lambda p: p[3] - (p[1] + day))
+    return projects_cpy
+
+
+def most_relevent_projects_2(day, projects):
+    projects = [p for p in projects if p[2] + min((p[3] - (p[1] + day), 0)) > 0]
+    projects_cpy = projects.copy()
+    projects_cpy.sort(key=lambda p: (p[3] - (p[1] + day)), reverse=True)
+    return projects_cpy
+
+# RELEVANT PROJECTS ------------------------------------------
 
 
 def solve(contributers, projects):
