@@ -55,10 +55,20 @@ def most_relevant_developrs(project, developers):
 
 def most_relevent_projects_0(day, projects):
     projects_cpy = projects.copy()
-    projects_cpy.sort(key=lambda p: p[2] / p[1])
-
+    projects_cpy.sort(key=lambda p: p[2] / p[1], reverse=True)
     return projects_cpy
 
+def most_relevent_projects_1(day, projects):
+    projects_cpy = projects.copy()
+    projects_cpy.sort(key=lambda p: p[3] - (p[1] + day))
+    return projects_cpy
+
+
+def most_relevent_projects_2(day, projects):
+    projects = [p for p in projects if p[2] + min((p[3] - (p[1] + day), 0)) > 0]
+    projects_cpy = projects.copy()
+    projects_cpy.sort(key=lambda p: (p[3] - (p[1] + day)), reverse=True)
+    return projects_cpy
 
 data_file_names = [
     # 'inputs/a_an_example.in.txt',
@@ -75,7 +85,7 @@ def process(data_file_name):
     finished_projects = []
     ongoing_projects = []
     for i in range(100):
-        for project in most_relevent_projects_0(i, projects):
+        for project in most_relevent_projects_2(i, projects):
             if most_relevant_developrs(project, contributors):
                 project.append(i)
                 ongoing_projects.append(project)
@@ -90,6 +100,7 @@ def process(data_file_name):
 
         if i % 10 == 0:
             write_output_file(projects, 'outputs/' + data_file_name.split('/')[1].split("_")[0] + '_out.txt')
+
 
 for data_file_name in data_file_names:
     process(data_file_name)
