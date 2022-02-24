@@ -15,7 +15,7 @@ def read_input_file(file_name):
             for i in range(skills_number):
                 skill_info = f.readline().split(' ')
                 skills[skill_info[0]] = int(skill_info[1])
-            return name, skills
+            return name, skills, False
 
         for i in range(contributors_number):
             contributors.append(parse_contributer())
@@ -36,9 +36,9 @@ def read_input_file(file_name):
     return contributors, projects
 
 
-def write_output_file(projects_info, file_name):
-    line = str(len(projects_info)) + '\n'
-    for project_name, contributers in projects_info:
+def write_output_file(projects, file_name):
+    line = str(len(projects)) + '\n'
+    for project_name, _, _, _, _, contributers in projects:
         line += project_name + '\n'
         for contributer in contributers:
             line += contributer + ' '
@@ -51,13 +51,25 @@ def write_output_file(projects_info, file_name):
 def most_relevant_developers(project, developers):
     return assign_developers(project, developers)
 
-def most_relevent_projects(day, projects):
-    return projects
+    return False
 
-def solve(contributers, projects):
-    contributers
 
-    # for i in range(100):
+def most_relevent_projects_0(day, projects):
+    projects_cpy = projects.copy()
+    projects_cpy.sort(key=lambda p: p[2] / p[1], reverse=True)
+    return projects_cpy
+
+def most_relevent_projects_1(day, projects):
+    projects_cpy = projects.copy()
+    projects_cpy.sort(key=lambda p: p[3] - (p[1] + day))
+    return projects_cpy
+
+
+def most_relevent_projects_2(day, projects):
+    projects = [p for p in projects if p[2] + min((p[3] - (p[1] + day), 0)) > 0]
+    projects_cpy = projects.copy()
+    projects_cpy.sort(key=lambda p: (p[3] - (p[1] + day)), reverse=True)
+    return projects_cpy
 
 data_file_names = [
     # 'inputs/a_an_example.in.txt',
@@ -73,9 +85,25 @@ from Assignments import assign_developers
 
 def process(data_file_name):
     contributors, projects = read_input_file(data_file_name)
-    most_relevant_developers(projects[0], contributors)
-    result = []
-    # write_output_file(ingredients, 'outputs/' + data_file_name.split('/')[1].split("_")[0] + '_out.txt')
+    finished_projects = []
+    ongoing_projects = []
+    for i in range(100):
+        for project in most_relevent_projects_2(i, projects):
+            if most_relevant_developers(project, contributors):
+                project.append(i)
+                ongoing_projects.append(project)
+                projects.remove(project)
+        ongoing_projects_copy = ongoing_projects.copy()
+        for ongoing_project in ongoing_projects_copy:
+            if i - ongoing_project[-1] == ongoing_project[1]:
+                for contributor in ongoing_project[-2]:
+                    contributor[-1] = False
+                finished_projects.append(ongoing_project)
+                ongoing_projects.remove(ongoing_project)
+
+        if i % 10 == 0:
+            write_output_file(projects, 'outputs/' + data_file_name.split('/')[1].split("_")[0] + '_out.txt')
+
 
 for data_file_name in data_file_names:
     process(data_file_name)
