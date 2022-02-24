@@ -67,7 +67,7 @@ def most_relevent_projects_1(day, projects):
 def most_relevent_projects_2(day, projects):
     projects = [p for p in projects if p[2] + min((p[3] - (p[1] + day), 0)) > 0]
     projects_cpy = projects.copy()
-    projects_cpy.sort(key=lambda p: (p[3] - (p[1] + day)), reverse=True)
+    projects_cpy.sort(key=lambda p: (p[3] - (p[1] + day)))
     return projects_cpy
 
 data_file_names = [
