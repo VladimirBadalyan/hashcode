@@ -15,7 +15,7 @@ def read_input_file(file_name):
             for i in range(skills_number):
                 skill_info = f.readline().split(' ')
                 skills[skill_info[0]] = int(skill_info[1])
-            return name, skills
+            return name, skills, False
 
         for i in range(contributors_number):
             contributors.append(parse_contributer())
@@ -27,7 +27,7 @@ def read_input_file(file_name):
             for i in range(int(project_info[-1])):
                 skill = f.readline().split(' ')
                 skills.append((skill[0], int(skill[1])))
-            return project_info[0], int(project_info[1]), int(project_info[2]), int(project_info[3]), skills
+            return project_info[0], int(project_info[1]), int(project_info[2]), int(project_info[3]), skills, []
 
 
         for i in range(projects_number):
@@ -54,18 +54,30 @@ def most_relevant_developrs(project, developers):
 def most_relevent_projects(day, projects):
     return projects
 
-def solve(contributers, projects):
-    contributers
-
-    # for i in range(100):
+def solve(contributors, projects):
+    finished_projects = []
+    ongoing_projects = []
+    for i in range(100):
+        for project in most_relevent_projects(i, projects):
+            if most_relevant_developrs(project, contributors):
+                project.append(i)
+                ongoing_projects.append(project)
+                projects.remove(project)
+        ongoing_projects_copy = ongoing_projects.copy()
+        for ongoing_project in ongoing_projects_copy:
+            if i - ongoing_project[-1] == ongoing_project[1]:
+                for contributor in ongoing_project[-2]:
+                    contributor[-1] = False
+                finished_projects.append(ongoing_project)
+                ongoing_projects.remove(ongoing_project)
 
 data_file_names = [
-    # 'inputs/a_an_example.in.txt',
+    'inputs/a_an_example.in.txt',
     'inputs/b_better_start_small.in.txt',
-    # 'inputs/c_collaboration.in.txt',
-    # 'inputs/d_dense_schedule.in.txt',
-    # 'inputs/e_exceptional_skills.in.txt',
-    # 'f_find_great_mentors.in.txt'
+    'inputs/c_collaboration.in.txt',
+    'inputs/d_dense_schedule.in.txt',
+    'inputs/e_exceptional_skills.in.txt',
+    'f_find_great_mentors.in.txt'
 ]
 
 
