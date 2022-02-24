@@ -51,8 +51,13 @@ def write_output_file(projects_info, file_name):
 def most_relevant_developrs(project, developers):
     return developers
 
-def most_relevent_projects(day, projects):
-    return projects
+
+def most_relevent_projects_0(day, projects):
+    projects_cpy = projects.copy()
+    projects_cpy.sort(key=lambda p: p[2] / p[1]).reverse()
+
+    return projects_cpy
+
 
 def solve(contributors, projects):
     finished_projects = []
