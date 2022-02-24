@@ -86,7 +86,8 @@ def process(data_file_name):
     ongoing_projects = []
     for i in range(100):
         for project in most_relevent_projects_2(i, projects):
-            if most_relevant_developrs(project, contributors):
+            free_contributors = [contributor for contributor in contributors if contributor[-1] == False]
+            if most_relevant_developrs(project, free_contributors):
                 project.append(i)
                 ongoing_projects.append(project)
                 projects.remove(project)
@@ -101,6 +102,8 @@ def process(data_file_name):
         if i % 10 == 0:
             write_output_file(projects, 'outputs/' + data_file_name.split('/')[1].split("_")[0] + '_out.txt')
 
+        if len(projects) == 0:
+            break
 
 for data_file_name in data_file_names:
     process(data_file_name)
