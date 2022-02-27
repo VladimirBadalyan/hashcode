@@ -1,4 +1,5 @@
 import os
+from Assignments import assign_developers
 
 def read_input_file(file_name):
     contributors = []
@@ -15,7 +16,7 @@ def read_input_file(file_name):
             for i in range(skills_number):
                 skill_info = f.readline().split(' ')
                 skills[skill_info[0]] = int(skill_info[1])
-            return name, skills, False
+            return [name, skills, False]
 
         for i in range(contributors_number):
             contributors.append(parse_contributer())
@@ -38,17 +39,18 @@ def read_input_file(file_name):
 
 def write_output_file(projects, file_name):
     line = str(len(projects)) + '\n'
-    for project_name, _, _, _, _, contributers in projects:
+    for project_name, _, _, _, _, contributers, _ in projects:
         line += project_name + '\n'
         for contributer in contributers:
-            line += contributer + ' '
+            line += contributer[0] + ' '
         line += '\n'
     os.makedirs('outputs', exist_ok=True)
     with open(file=file_name, mode='w') as f:
         f.write(line)
 
 
-def most_relevant_developrs(project, developers):
+def most_relevant_developers(project, developers):
+    return assign_developers(project, developers)
 
     return False
 
@@ -80,30 +82,41 @@ data_file_names = [
 ]
 
 
+
 def process(data_file_name):
     contributors, projects = read_input_file(data_file_name)
     finished_projects = []
     ongoing_projects = []
-    for i in range(100):
-        for project in most_relevent_projects_2(i, projects):
-            free_contributors = [contributor for contributor in contributors if contributor[-1] == False]
-            if most_relevant_developrs(project, free_contributors):
-                project.append(i)
-                ongoing_projects.append(project)
-                projects.remove(project)
+    find_new_developers = True
+    for i in range(1000000000):
+        if find_new_developers == True:
+            print(i, len(projects))
+            for project in most_relevent_projects_2(i, projects):
+                free_contributors = [contributor for contributor in contributors if contributor[-1] == False]
+                if most_relevant_developers(project, free_contributors):
+                    project.append(i)
+                    ongoing_projects.append(project)
+                    projects.remove(project)
+            find_new_developers = False
+
+        if len(ongoing_projects) == 0:
+            break
+
         ongoing_projects_copy = ongoing_projects.copy()
         for ongoing_project in ongoing_projects_copy:
             if i - ongoing_project[-1] == ongoing_project[1]:
+                find_new_developers = True
                 for contributor in ongoing_project[-2]:
                     contributor[-1] = False
                 finished_projects.append(ongoing_project)
                 ongoing_projects.remove(ongoing_project)
 
-        if i % 10 == 0:
-            write_output_file(projects, 'outputs/' + data_file_name.split('/')[1].split("_")[0] + '_out.txt')
+        if i % 100 == 0:
+            write_output_file(finished_projects, 'outputs/' + data_file_name.split('/')[1].split("_")[0] + '_out.txt')
 
-        if len(projects) == 0:
-            break
+
+    write_output_file(finished_projects, 'outputs/' + data_file_name.split('/')[1].split("_")[0] + '_out.txt')
+
 
 for data_file_name in data_file_names:
     process(data_file_name)
