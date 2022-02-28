@@ -1,5 +1,8 @@
 import os
-from Assignments import assign_developers
+from scipy.sparse import csr_matrix
+from scipy.sparse.csgraph import maximum_bipartite_matching
+import numpy as np
+
 
 def read_input_file(file_name):
     contributors = []
@@ -24,10 +27,10 @@ def read_input_file(file_name):
 
         def parse_project():
             project_info = f.readline().split(' ')
-            skills = dict()
+            skills = []
             for i in range(int(project_info[-1])):
                 skill = f.readline().split(' ')
-                skills[skill[0]] = int(skill[1])
+                skills.append((skill[0], int(skill[1])))
             return [project_info[0], int(project_info[1]), int(project_info[2]), int(project_info[3]), skills, []]
 
 
@@ -50,30 +53,49 @@ def write_output_file(projects, file_name):
 
 
 def most_relevant_developers(project, developers):
-    return assign_developers(project, developers)
+    roles = project[4]
+    devs = [dev for dev in developers if any([role[0] in dev[1] for role in roles])]
 
-    return False
+    adj_matrix = []
+    for skl in roles:
+        row = []
+        for dev in devs:
+            if skl[0] in dev[1]:
+                if dev[1][skl[0]] >= skl[1]:
+                    row.append(1)
+                else:
+                    row.append(0)
+            else:
+                row.append(0)
+        adj_matrix.append(row)
+    graph = csr_matrix(np.array(adj_matrix))
+    assign = maximum_bipartite_matching(graph, perm_type='column')
+    if -1 in assign:
+        return False
+    for i in range(len(roles)):
+        role = roles[i]
+        dev = devs[assign[i]]
+        if dev[1][role[0]] == role[1]:
+            dev[1][role[0]] += 1
+        dev[-1] = True
+        project[-1].append(dev)
+    return len(assign) == len(roles)
 
 
-def most_relevent_projects_0(day, projects):
+def find_most_relevent_projects(day, projects):
+    projects = [p for p in projects if p[2] + min((p[3] - (p[1] + day), 0)) > 0]
     projects_cpy = projects.copy()
-    projects_cpy.sort(key=lambda p: p[2] / p[1], reverse=True)
+    projects_cpy.sort(key=lambda p: (p[2] + min((p[3] - (p[1] + day), 0))))
     return projects_cpy
 
-def most_relevent_projects_1(day, projects):
-    projects_cpy = projects.copy()
-    projects_cpy.sort(key=lambda p: p[3] - (p[1] + day))
-    return projects_cpy
-
-
-def most_relevent_projects_2(day, projects):
+def find_most_relevent_projects_1(day, projects):
     projects = [p for p in projects if p[2] + min((p[3] - (p[1] + day), 0)) > 0]
     projects_cpy = projects.copy()
     projects_cpy.sort(key=lambda p: (p[3] - (p[1] + day)))
     return projects_cpy
 
 data_file_names = [
-    # 'inputs/a_an_example.in.txt',
+    'inputs/a_an_example.in.txt',
     'inputs/b_better_start_small.in.txt',
     # 'inputs/c_collaboration.in.txt',
     # 'inputs/d_dense_schedule.in.txt',
@@ -91,7 +113,7 @@ def process(data_file_name):
     for i in range(1000000000):
         if find_new_developers == True:
             print(i, len(projects))
-            for project in most_relevent_projects_2(i, projects):
+            for project in find_most_relevent_projects_1(i, projects):
                 free_contributors = [contributor for contributor in contributors if contributor[-1] == False]
                 if most_relevant_developers(project, free_contributors):
                     project.append(i)
